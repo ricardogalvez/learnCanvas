@@ -1,0 +1,12 @@
+html {
+  font-size: 16px;
+}
+body {
+  /*background-color: #e3e3e3;*/
+}
+canvas {
+  /*background-color: red;*/
+  /*border: 1px dotted red;*/
+  /*width: calc(16rem * 4);
+  height: calc(9rem * 4);*/
+}

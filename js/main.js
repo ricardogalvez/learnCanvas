@@ -14,11 +14,15 @@ var ctx = canvas.getContext('2d');
 // ctx.fillRect(67, 333, 145, 215);
 
 // ctx.beginPath(); // this gets carried through, so redefine on each object
-// ctx.moveTo(56, 167); // x,y
-// ctx.lineTo(455,300); // where the line is going
-// ctx.lineTo(903,1050); // you can continue the line
-// ctx.strokeStyle = 'rgba(23, 167, 123, 0.7)';
+// for (n = 0; n < 100; n++) {
+//   var x = Math.random() + n / (window.innerWidth - n);
+//   var y = Math.random() + n / (window.innerHeight - 1);
+// ctx.moveTo(x, y); // x,y
+// ctx.lineTo(x, 100); // where the line is going
+// ctx.lineTo(x, y); // you can continue the line
+// ctx.strokeStyle = 'rgba(0, 167, 123, 0.7)';
 // ctx.stroke();
+// }
 
 // arc
 // https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/arc
@@ -33,16 +37,77 @@ var ctx = canvas.getContext('2d');
 // ctx.strokeStyle = 'rgba(250, 7, 161, 0.2)';
 // ctx.stroke(); // dont forget the stroke method!
 
-for (i = 0; i < 255; i++) {
+// for (i = 0; i < 255; i++) {
+//
+//     var x = Math.random() * window.innerWidth;
+//     var y = Math.random() * window.innerHeight;
+//     var r = Math.random() * Math.floor(400 / 3.5 * i);
+//     ctx.beginPath();
+//     ctx.arc(x, y, r, 0, 2 * Math.PI, false);
+//     for (var j = 0; j < 7.5; j++) {
+//       ctx.strokeStyle = 'rgb(' + Math.floor(255 - j * i ) + ',' + Math.floor(255 - j * 11) + ', ' + Math.floor(255 - j) + ')';
+//       ctx.lineWidth = (j * (Math.random() / i * 16))
+//                        }
+//     ctx.stroke(); // dont forget the stroke method!
+// };
 
-    var x = Math.random() * window.innerWidth;
-    var y = Math.random() * window.innerHeight;
-    var r = Math.random() * Math.floor(400 / 3.5 * i);
+
+function Circle(x, y, dx, dy, r, sw) {
+  this.x = x;
+  this.y = y;
+  this.dx = dx;
+  this.dy = dy;
+  this.r = r; // radius
+  this.sw = sw;
+  this.draw =  function() {
     ctx.beginPath();
-    ctx.arc(x, y, r, 0, 2 * Math.PI, false);
-    for (var j = 0; j < 10; j++) {
-      ctx.strokeStyle = 'rgb(' + Math.floor(255 - j * i ) + ',' + Math.floor(255 - j * 11) + ', ' + Math.floor(255 - j) + ')';
-      ctx.lineWidth = (j * (Math.random() / i * 10))
-                       }
+    ctx.arc(this.x, this.y, this.r, 0, 2 * Math.PI);
+    ctx.strokeStyle = 'rgba(2, 160, 105, 0.7)';
+    ctx.lineWidth = this.sw;
     ctx.stroke(); // dont forget the stroke method!
-};
+  } // /draw
+
+  this.update = function() {
+    if (this.x + this.r > innerWidth || this.x - this.r < 0) {
+      this.dx = -this.dx;
+    }
+    if (this.y + this.r > innerHeight || this.y - this.r < 0) {
+      this.dy = -this.dy;
+    }
+    this.x += this.dx;
+    this.y += this.dy;
+
+    this.draw();
+  } // /update
+}
+
+circleArray = [];
+
+for (var i = 0; i < 50; i++) {
+  var r = (Math.random() * 145);
+  // var r = Math.floor(Math.random() * 100);
+  var x = Math.random() * innerWidth;
+  var y = Math.random() * innerHeight;
+  // velocity
+  var dx = (Math.random() - 0.5) * 2;
+  var dy = (Math.random() - 0.5) * 2  ;
+  var sw = (Math.random() * 40);
+  circleArray.push(new Circle(x, y, dx, dy, r, sw));
+}
+
+// console.log(circleArray);
+
+//////
+// https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/clearRect
+// https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame
+// void ctx.clearRect(x, y, width, height);
+function animate() {
+  requestAnimationFrame(animate);
+  ctx.clearRect(0, 0, innerWidth, innerHeight); // clears the canvas
+
+  for (var i = 0; i < circleArray.length; i++) {
+    circleArray[i].update();
+  }
+}
+
+animate();
